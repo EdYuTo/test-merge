@@ -36,7 +36,7 @@ jobs:
               -H "Accept: application/vnd.github.v3+json" \
               -H "Authorization: Bearer $GH_TOKEN" \
               repos/$REPOSITORY/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals \
-              -f message='Please add the `auto-approve` label to keep github-actions' approve'
+              -f message='Please add the `auto-approve` label to keep github-actions\' approve'
           done
         env:
           GH_TOKEN: ${{ github.token }}
