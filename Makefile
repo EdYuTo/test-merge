@@ -56,12 +56,9 @@ app-for-action:
 
 pull-request:
 	$(eval BRANCH_NAME:=$(shell git branch --show-current))
-
-	@gh pr create \
-		--base main \
-		--head "${BRANCH_NAME}" \
-		--assignee "@me" \
-		--label "auto-approve"
+	$(eval TITLE?="Should've named this")
+	$(eval PULL_REQUEST:=$(shell gh pr create --base main --head ${BRANCH_NAME} --title \"${TITLE}\" --fill-verbose --assignee "@me"))
+	@gh pr merge ${PULL_REQUEST} --auto -s
 
 check-pr:
 	@test -n "${ID}" || (echo "You must pass the pr id: make check-pr ID=X"; exit 1)
