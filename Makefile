@@ -64,3 +64,5 @@ check-pr:
 	@test -n "${ID}" || (echo "You must pass the pr id: make check-pr ID=X"; exit 1)
 	@gh pr view ${ID} --json isDraft,mergeable,state,reviewDecision,statusCheckRollup > pr-validation.json
 	@cat pr-validation.json | jq 'if .isDraft == false and .mergeable=="MERGEABLE" and (.reviewDecision=="APPROVED" or .reviewDecision=="") and (.statusCheckRollup | all(.conclusion == "SUCCESS" or .conclusion == "SKIPPED")) then "READY TO MERGE" else "MERGING IS BLOCKED" end'
+	@# .statusCheckRollup.[].conclusion == SUCCESS || SKIPPED // SUCCESS, SKIPPED, FAILURE
+	@# .statusCheckRollup.[].status == COMPLETED // IN_PROGRESS, QUEUED, COMPLETED
