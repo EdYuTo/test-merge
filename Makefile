@@ -53,3 +53,6 @@ app-for-action:
 	-scheme ${PROJECT_NAME} \
 	-archivePath "${PROJECT_DIR}/build/${PROJECT_NAME}-iossimulator.xcarchive" \
 	-sdk iphonesimulator
+
+scripts-permission:
+	@for file in ./Scripts; do chmod +x $${file}; done
