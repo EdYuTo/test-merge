@@ -53,3 +53,21 @@ app-for-action:
 	-scheme ${PROJECT_NAME} \
 	-archivePath "${PROJECT_DIR}/build/${PROJECT_NAME}-iossimulator.xcarchive" \
 	-sdk iphonesimulator
+
+pull-request:
+	$(eval BRANCH_NAME:=$(shell git branch --show-current))
+	$(eval USER_NAME:=$(shell git config user.name))
+	$(eval TITLE?="Should've named this")
+
+	@gh pr create \
+		--base main \
+		--head "${BRANCH_NAME}" \
+		--title "${TITLE}" \
+		--body "- [ ] Auto approve" \
+		--assignee "${USER_NAME}" \
+		--label "test"
+
+check-pr:
+	@test -n "${ID}" || (echo "You must pass the pr id: make check-pr ID=X"; exit 1)
+	@gh pr view ${ID} --json mergeable,state,reviewDecision,statusCheckRollup > pr-validation.json
+	@cat pr-validation.json | jq 'if .mergeable=="MERGEABLE" and .reviewDecision=="APPROVED" and (.statusCheckRollup | all(.conclusion == "SUCCESS" or .conclusion == "SKIPPED")) then "READY TO MERGE" else "MERGING IS BLOCKED" end'
