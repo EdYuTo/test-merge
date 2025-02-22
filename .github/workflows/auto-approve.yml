@@ -2,53 +2,17 @@ name: Auto approve
 
 on: 
   pull_request_target:
-    types:
-      - assigned
-      - unassigned
+    types: 
       - labeled
-      - unlabeled
       - opened
-      - edited
-      - closed
-      - reopened
-      - synchronize
-      - converted_to_draft
-      - ready_for_review
-      - locked
-      - unlocked
-      - review_requested
-      - review_request_removed
-      - auto_merge_enabled
-      - auto_merge_disabled
 
 jobs:
-  detect:
-    name: Verify checks
-    runs-on: ubuntu-latest
-    outputs:
-      checked: ${{ steps.detects.outputs.checked }}
-      unchecked: ${{ steps.detects.outputs.unchecked }}
-    permissions:
-      pull-requests: write
-    steps:
-      - name: Checkbox Trigger
-        id: detects
-        uses: karlderkaefer/github-action-checkbox-trigger@v1
-        with:
-          github-token: ${{ github.token }}
-          action: detect
-      - name: list changes
-        run: |
-          echo "checked=${{ steps.detects.outputs.checked }}"
-          echo "unchecked=${{ steps.detects.outputs.unchecked }}"
-
   auto-approve:
     name: Auto-approve
     runs-on: ubuntu-latest
-    needs: detect
     permissions:
       pull-requests: write
-    if: ${{ contains(needs.detect.outputs.checked, 'Auto approve') }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto-approve') }}
     steps:
       - uses: hmarr/auto-approve-action@v4
         with:
@@ -57,8 +21,7 @@ jobs:
   dismiss-approvals:
     name: Auto-disapprove
     runs-on: ubuntu-latest
-    needs: detect
-    if: ${{ !(contains(needs.detect.outputs.checked, 'Auto approve')) }}
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'auto-approve') }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -70,10 +33,11 @@ jobs:
             gh api \
               -X PUT \
               -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
               repos/$REPOSITORY/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals \
               -f message='Dismissing approval via GitHub Actions'
           done
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
