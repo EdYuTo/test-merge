@@ -70,6 +70,7 @@ jobs:
             gh api \
               -X PUT \
               -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
               repos/$REPOSITORY/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals \
               -f message='Dismissing approval via GitHub Actions'
           done
