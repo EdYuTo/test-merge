@@ -1,7 +1,7 @@
 name: Auto approve
 
 on: 
-  pull_request_target:
+  pull_request:
     types:
       - assigned
       - unassigned
@@ -75,6 +75,6 @@ jobs:
               -f message='Dismissing approval via GitHub Actions'
           done
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
