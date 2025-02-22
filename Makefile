@@ -56,12 +56,11 @@ app-for-action:
 
 pull-request:
 	$(eval BRANCH_NAME:=$(shell git branch --show-current))
-	$(eval USER_NAME:=$(shell git config user.name))
 
 	@gh pr create \
 		--base main \
 		--head "${BRANCH_NAME}" \
-		--assignee "${USER_NAME}" \
+		--assignee "@me" \
 		--label "auto-approve"
 
 check-pr:
