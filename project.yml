@@ -47,6 +47,7 @@ targets:
     platform: iOS
     sources: [TestMerge]
     postBuildScripts:
+      - script: make scripts-permission
       - script: ./Scripts/swiftlint
         name: SwiftLint
         basedOnDependencyAnalysis: NO
