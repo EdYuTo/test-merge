@@ -63,9 +63,8 @@ pull-request:
 		--base main \
 		--head "${BRANCH_NAME}" \
 		--title "${TITLE}" \
-		--body "- [ ] Auto approve" \
 		--assignee "${USER_NAME}" \
-		--label "test"
+		--label "auto-approve"
 
 check-pr:
 	@test -n "${ID}" || (echo "You must pass the pr id: make check-pr ID=X"; exit 1)
