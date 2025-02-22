@@ -70,4 +70,4 @@ pull-request:
 check-pr:
 	@test -n "${ID}" || (echo "You must pass the pr id: make check-pr ID=X"; exit 1)
 	@gh pr view ${ID} --json mergeable,state,reviewDecision,statusCheckRollup > pr-validation.json
-	@cat pr-validation.json | jq 'if .mergeable=="MERGEABLE" and .reviewDecision=="APPROVED" and (.statusCheckRollup | all(.conclusion == "SUCCESS" or .conclusion == "SKIPPED")) then "READY TO MERGE" else "MERGING IS BLOCKED" end'
+	@cat pr-validation.json | jq 'if .mergeable=="MERGEABLE" and (.reviewDecision=="APPROVED" or .reviewDecision=="") and (.statusCheckRollup | all(.conclusion == "SUCCESS" or .conclusion == "SKIPPED")) then "READY TO MERGE" else "MERGING IS BLOCKED" end'
